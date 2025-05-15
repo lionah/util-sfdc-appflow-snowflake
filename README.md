@@ -16,7 +16,7 @@ in this as well.
 I've tried to use as little dependencies as possible but we use
 `simple-salesforce` to get the objects fields.
 
-```
+```sh
 $ pip install -r requirements.txt
 ```
 
@@ -26,7 +26,7 @@ Set the following environment variables to access your Salesforce instance:
 `SFDC_USERNAME`, `SFDC_PASSWORD`, and `SFDC_SECURITYTOKEN`.
 
 Example:
-```
+```sh
 $ export SFDC_USERNAME="username@example.com"
 $ export SFDC_PASSWORD="*******"
 $ export SFDC_SECURITYTOKEN="*********************"
@@ -37,12 +37,12 @@ $ export SFDC_SECURITYTOKEN="*********************"
 We're going to create a CSV with all the fields of the SObject so that we can
 make adjustments (if desired) before we create the Terraform.
 
-```
+```sh
 $ python sobject.py [sobject]
 ```
 
 Example:
-```
+```sh
 $ python sobject.py Contact
 ```
 
@@ -94,7 +94,7 @@ Supported `destination_datatype` values:
 
 Finally, we use `terraform.py` to get our Terraform configuration.
 
-```
+```sh
 $ python terraform.py Contact.csv > contact.tf
 ```
 
@@ -108,7 +108,7 @@ $ python terraform.py Contact.csv > contact.tf
 We have used the following resources as placeholders for your actual
 configuration:
 
-```
+```tf
 #
 # AWS AppFlow Connector Profiles
 #
