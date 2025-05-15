@@ -5,6 +5,10 @@ be daunting due to the large amount of fields that SObjects tend to have. This
 simple utility that will generate Terraform to create the AppFlow in AWS and the
 table in Snowflake.
 
+I've created this utility to help me create a pipeline from Salesforce in to
+Snowflake quickly. It is certainly not perfect but I hope others can find use
+in this as well.
+
 ## Usage
 
 ### Step 1: Install Dependencies
@@ -26,7 +30,7 @@ Set the following environment variables to access your Salesforce instance:
 
 Example:
 ```
-$ export SFDC_USERNAME="ryan_park@example.com"
+$ export SFDC_USERNAME="username@example.com"
 $ export SFDC_PASSWORD="*******"
 $ export SFDC_SECURITYTOKEN="*********************"
 ```
@@ -37,12 +41,12 @@ We're going to create a CSV with all the fields of the SObject so that we can
 make adjustments (if desired) before we create the Terraform.
 
 ```
-$ python get_sobject.py [Salesforce SObject API Name]
+$ python sobject.py [Salesforce SObject API Name]
 ```
 
 Example:
 ```
-$ python get_sboject.py Contact
+$ python sobject.py Contact
 ```
 
 ### Step 4: (Optional) Make Adjustments
@@ -66,8 +70,9 @@ The CSV should have the following columns:
    may cause errors.
 
 > [!WARNING]
-> This script is unable to determine the datatype of Roll-up fields. Please
-> adjust the `source_datatype` and `destination_datatype` manually.
+> This script is unable to determine the datatype of all fields. Seach for
+> "REPLACE_ME" in the `source_datatype` and `destination_datatype` column and
+> manually replace. If you're unsure, `STRING` is a safe bet.
 
 > [!CAUTION]
 > Salesforce does not keep up-to-date information in Formula fields. Since these
