@@ -82,10 +82,10 @@ The CSV should have the following columns:
 
 ### Step 5: Generate Terraform
 
-Finally, we use `generate.py` to get our Terraform configuration.
+Finally, we use `terraform.py` to get our Terraform configuration.
 
 ```
-$ python generate.py Contact.csv
+$ python terraform.py Contact.csv > contact.tf
 ```
 
 > [!CAUTION]
@@ -115,12 +115,12 @@ resource "aws_appflow_connector_profile" "snowflake_connector_profile" {
 # AWS S3
 #
 
-resource "aws_s3_bucket" "staging-bucket" {
+resource "aws_s3_bucket" "staging_bucket" {
   bucket = "YOUR-UNIQUE-BUCKET-NAME-HERE-00000000000"
 }
 
 resource "aws_s3_object" "salesforce_stage_object" {
-  bucket = aws_s3_bucket.staging-bucket.id
+  bucket = aws_s3_bucket.staging_bucket.id
   key    = "/"
 }
 
