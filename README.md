@@ -20,9 +20,6 @@ I've tried to use as little dependencies as possible but we use
 $ pip install -r requirements.txt
 ```
 
-> [!TIP]
-> I highly recommend using virtual environments to install your dependencies.
-
 ### Step 2: Salesforce Credentials
 
 Set the following environment variables to access your Salesforce instance:
@@ -41,7 +38,7 @@ We're going to create a CSV with all the fields of the SObject so that we can
 make adjustments (if desired) before we create the Terraform.
 
 ```
-$ python sobject.py [Salesforce SObject API Name]
+$ python sobject.py [sobject]
 ```
 
 Example:
@@ -68,6 +65,19 @@ The CSV should have the following columns:
 1. Remove any rows you wish to exclude from the Flow.
 2. Update any `source_datatype` or `destination_datatype`. Be careful as this
    may cause errors.
+
+Supported `source_datatype` values:
+* Mystery values from AWS
+
+Supported `destination_datatype` values:
+* BOOLEAN
+* CURRENCY
+* DATE
+* DATETIME
+* FLOAT
+* NUMBER
+* STRING
+* TEXT
 
 > [!WARNING]
 > This script is unable to determine the datatype of all fields. Seach for
