@@ -1,1 +1,133 @@
-# util-sfdc-appflow-snowflake
+# Utility - Salesforce -> AppFlow -> Snowflake
+
+Creating Terraform for AppFlow that moves data from Salesforce to Snowflake can
+be daunting due to the large amount of fields that SObjects tend to have. This
+simple utility that will generate Terraform to create the AppFlow in AWS and the
+table in Snowflake.
+
+## Usage
+
+### Step 1: Install Dependencies
+
+I've tried to use as little dependencies as possible but we use
+`simple-salesforce` to get the objects fields.
+
+```
+$ pip install -r requirements.txt
+```
+
+> [!TIP]
+> I highly recommend using virtual environments to install your dependencies.
+
+### Step 2: Salesforce Credentials
+
+Set the following environment variables to access your Salesforce instance:
+`SFDC_USERNAME`, `SFDC_PASSWORD`, and `SFDC_SECURITYTOKEN`.
+
+Example:
+```
+$ export SFDC_USERNAME="ryan_park@example.com"
+$ export SFDC_PASSWORD="*******"
+$ export SFDC_SECURITYTOKEN="*********************"
+```
+
+### Step 3: Get Object Fields
+
+We're going to create a CSV with all the fields of the SObject so that we can
+make adjustments (if desired) before we create the Terraform.
+
+```
+$ python get_sobject.py [Salesforce SObject API Name]
+```
+
+Example:
+```
+$ python get_sboject.py Contact
+```
+
+### Step 4: (Optional) Make Adjustments
+
+> [!TIP]
+> This step is completely optional as you can make adjustments on the generated
+> Terraform. However, I find it is easier to do in a CSV than looking through
+> the many lines of Terraform configuration.
+
+Open the object_name.csv file to make adjustments to how the Terraform and table
+will be created.
+
+The CSV should have the following columns:
+* `source_field` - Do not modify. This is the API Name of the object's field.
+* `source_datatype` - Data type that AppFlow expects.
+* `destination_datatype` - Data type of Snowflake.
+* `salesforce_datatype` - Unused but helpful while making adjustments.
+
+1. Remove any rows you wish to exclude from the Flow.
+2. Update any `source_datatype` or `destination_datatype`. Be careful as this
+   may cause errors.
+
+> [!WARNING]
+> This script is unable to determine the datatype of Roll-up fields. Please
+> adjust the `source_datatype` and `destination_datatype` manually.
+
+> [!CAUTION]
+> Salesforce does not keep up-to-date information in Formula fields. Since these
+> fields can be recreated using other fields, I recommend removing these fields
+> from your AppFlow Flow. Keeping them will only frustrate your analysts and,
+> therefore, eventually you.
+
+### Step 5: Generate Terraform
+
+Finally, we use `generate.py` to get our Terraform configuration.
+
+```
+$ python generate.py Contact.csv
+```
+
+> [!CAUTION]
+> Your work is not done!
+>
+> The generated terraform is incomplete. You'll still need to update
+> `source_flow_config` and `destination_flow_config` with the correct
+> connectors.
+
+We have used the following resources as placeholders for your actual
+configuration:
+
+```
+#
+# AWS AppFlow Connector Profiles
+#
+
+resource "aws_appflow_connector_profile" "salesforce_connector_profile" {
+	... YOUR CONFIGURATION HERE ...
+}
+
+resource "aws_appflow_connector_profile" "snowflake_connector_profile" {
+	... YOUR CONFIGURATION HERE ...
+}
+
+#
+# AWS S3
+#
+
+resource "aws_s3_bucket" "staging-bucket" {
+  bucket = "YOUR-UNIQUE-BUCKET-NAME-HERE-00000000000"
+}
+
+resource "aws_s3_object" "salesforce_stage_object" {
+  bucket = aws_s3_bucket.staging-bucket.id
+  key    = "/"
+}
+
+#
+# Snowflake
+#
+resource "snowflake_database" "staging_database" {
+  name    = "STAGING"
+}
+
+resource "snowflake_schema" "staging_salesforce_schema" {
+  database = snowflake_database.staging_database.name
+  name     = "SALESFORCE"
+}
+```
