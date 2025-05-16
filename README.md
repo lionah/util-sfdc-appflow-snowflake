@@ -98,12 +98,9 @@ Finally, we use `terraform.py` to get our Terraform configuration.
 $ python terraform.py Contact.csv > contact.tf
 ```
 
-> [!CAUTION]
-> Your work is not done!
->
-> The generated terraform is incomplete. You'll still need to update
-> `source_flow_config` and `destination_flow_config` with the correct
-> connectors.
+> [!NOTE]
+> The generated terraform is incomplete. We assume the following resources are
+> available. Other resources might be required like IAM policies.
 
 We have used the following resources as placeholders for your actual
 configuration:
