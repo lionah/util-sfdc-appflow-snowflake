@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from simple_salesforce import Salesforce
+from simple_salesforce import Salesforce, format_soql
 import csv
 import os
 import sys
@@ -86,14 +86,16 @@ def get_sobject_desc(obj):
         security_token=os.environ.get('SFDC_SECURITYTOKEN'))
 
     return sf.query(
-        f"""
-        SELECT
-            QualifiedApiName, DataType
-        FROM
-            FieldDefinition
-        WHERE
-            EntityDefinition.QualifiedApiName = '{obj}'
-        """)
+        format_soql(
+            """
+            SELECT
+                QualifiedApiName, DataType
+            FROM
+                FieldDefinition
+            WHERE
+                EntityDefinition.QualifiedApiName = '{obj}'
+            """,
+            obj=obj))
 
 
 def ignored_row(row):
